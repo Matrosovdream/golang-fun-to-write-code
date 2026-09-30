@@ -1,0 +1,86 @@
+// The contract comes first: services are designed here, and Go code is
+// generated from it (`make proto` / buf generate). Never edit gen/ by hand.
+syntax = "proto3";
+
+package inventory.v1;
+
+option go_package = "grpcinv/gen/inventory/v1;inventoryv1";
+
+import "google/protobuf/timestamp.proto";
+
+// Inventory demonstrates all four gRPC call shapes.
+service Inventory {
+  // Unary: one request, one response.
+  rpc GetProduct(GetProductRequest) returns (Product);
+
+  // Unary, used by the Orders service.
+  rpc ReserveStock(ReserveRequest) returns (ReserveResult);
+
+  // Client streaming: many requests, one summary response.
+  rpc BulkAddProducts(stream AddProductRequest) returns (BulkAddSummary);
+
+  // Server streaming: one request, a live feed of responses.
+  rpc WatchStock(WatchStockRequest) returns (stream StockUpdate);
+
+  // Bidirectional streaming: reserve interactively, results flow back.
+  rpc Reserve(stream ReserveRequest) returns (stream ReserveResult);
+}
+
+service Orders {
+  rpc PlaceOrder(PlaceOrderRequest) returns (Order);
+}
+
+message Product {
+  string sku = 1;
+  string name = 2;
+  int64 price_cents = 3;
+  int64 stock = 4;
+}
+
+message GetProductRequest {
+  string sku = 1;
+}
+
+message AddProductRequest {
+  Product product = 1;
+}
+
+message BulkAddSummary {
+  int64 added = 1;
+  int64 rejected = 2;
+}
+
+message WatchStockRequest {
+  string sku = 1;
+}
+
+message StockUpdate {
+  string sku = 1;
+  int64 stock = 2;
+  google.protobuf.Timestamp at = 3;
+}
+
+message ReserveRequest {
+  string sku = 1;
+  int64 quantity = 2;
+}
+
+message ReserveResult {
+  string sku = 1;
+  bool ok = 2;
+  int64 remaining_stock = 3;
+  string reason = 4;
+}
+
+message PlaceOrderRequest {
+  string sku = 1;
+  int64 quantity = 2;
+}
+
+message Order {
+  string id = 1;
+  string sku = 2;
+  int64 quantity = 3;
+  int64 total_cents = 4;
+  google.protobuf.Timestamp placed_at = 5;
+}

@@ -1,0 +1,15 @@
+# binaries and profiles
+*.exe
+*.test
+*.out
+*.prof
+bin/
+
+# local data files from demo runs
+*.db
+*.sqlite
+shortlink.db
+tasks.json
+
+# OS noise
+.DS_Store

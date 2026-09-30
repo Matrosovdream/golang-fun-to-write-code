@@ -1,0 +1,7 @@
+# Local development config. Every key can be overridden by env:
+# GOBANK_ADDR, GOBANK_DB_DSN, GOBANK_JWT_SECRET, GOBANK_TOKEN_TTL, GOBANK_LOG_DEV
+addr: ":8085"
+db_dsn: "postgres://gobank:gobank@localhost:5435/gobank?sslmode=disable"
+jwt_secret: "dev-secret-change-me"
+token_ttl: 24h
+log_dev: true
