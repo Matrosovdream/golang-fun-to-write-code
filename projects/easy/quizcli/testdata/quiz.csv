@@ -1,0 +1,11 @@
+question,answer
+What keyword declares a variable with inferred type?,:=
+What is the zero value of a pointer?,nil
+Which builtin grows a slice?,append
+What does 2+3*4 equal?,14
+Which keyword starts a goroutine?,go
+What is the zero value of an int?,0
+Which operator receives from a channel?,<-
+What file declares a module's path?,go.mod
+Which command formats Go code?,gofmt
+"What is len(""go"")?",2

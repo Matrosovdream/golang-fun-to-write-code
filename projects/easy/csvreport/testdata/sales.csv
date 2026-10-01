@@ -1,0 +1,11 @@
+date,region,product,amount
+2026-01-05,EU,widget,120.50
+2026-01-12,US,widget,99.99
+2026-01-20,EU,gadget,250.00
+2026-02-02,US,gadget,310.25
+2026-02-14,EU,widget,80.00
+2026-02-20,APAC,widget,145.75
+2026-03-01,US,widget,200.00
+2026-03-08,APAC,gadget,99.50
+2026-03-15,EU,gadget,410.80
+2026-03-30,US,gizmo,55.10
