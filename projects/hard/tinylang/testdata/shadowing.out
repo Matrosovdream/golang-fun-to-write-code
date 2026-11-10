@@ -1,0 +1,11 @@
+inner 2
+innermost 3
+inner again 2
+outer 1
+[11, 20] 1
+shadowed in fn 1
+42
+2
+100
+3
+2

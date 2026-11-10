@@ -1,0 +1,2 @@
+go
+error: 2:24: runtime error: division by zero

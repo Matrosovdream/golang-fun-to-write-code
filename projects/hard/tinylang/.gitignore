@@ -1,0 +1,2 @@
+# Golden outputs for TestDifferential. The repo-wide *.out ignore must not swallow them.
+!testdata/*.out

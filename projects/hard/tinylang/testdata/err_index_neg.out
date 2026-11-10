@@ -1,0 +1,2 @@
+a
+error: 3:8: runtime error: index out of range: -1 (length 3)

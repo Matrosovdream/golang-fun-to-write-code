@@ -1,0 +1,2 @@
+before
+error: 3:15: runtime error: type mismatch: int + bool

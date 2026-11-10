@@ -1,0 +1,2 @@
+calling
+error: 3:7: runtime error: cannot call int

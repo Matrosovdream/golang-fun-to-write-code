@@ -1,0 +1,2 @@
+start
+error: 1:24: runtime error: stack overflow

@@ -1,0 +1,5 @@
+error: 1:9: syntax error: unexpected ";"
+2:17: syntax error: expected ")", found "{"
+3:8: syntax error: expected ")", found ";"
+4:12: syntax error: unexpected ";"
+6:1: syntax error: expected "{", found end of input

@@ -1,0 +1,14 @@
+let trace = fn(label, v) { print("eval", label); v };
+print(trace("a", false) && trace("b", true));
+print(trace("c", true) && trace("d", 5));
+print(trace("e", true) || trace("f", false));
+print(trace("g", null) || trace("h", "fallback"));
+print(!true, !false, !null, !0, !"", ![]);
+print(1 < 2 == true, 1 == 1 != false);
+print(null == null, null == false, 0 == false, "1" == 1, [] == []);
+print(if 0 { "zero is truthy" } else { "zero is falsy" });
+print(if null { 1 } else { 2 }, if false { 1 });
+let x = if 3 > 2 { "big" } else { "small" };
+print(x);
+print(if false { 1 } else if false { 2 } else if true { 3 } else { 4 });
+print(-5 + 2, -(2 + 3), - -4, 7 % 3, 7 / 2, -7 / 2, -7 % 3, 2 + 3 * 4 - 6 / 2);

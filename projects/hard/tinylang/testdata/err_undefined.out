@@ -1,0 +1,2 @@
+start
+error: 2:7: runtime error: undefined variable "missing"

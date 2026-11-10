@@ -1,0 +1,18 @@
+eval a
+false
+eval c
+eval d
+5
+eval e
+true
+eval g
+eval h
+fallback
+false true true false false false
+true true
+true false false false false
+zero is truthy
+2 null
+big
+3
+-3 -5 4 1 3 -3 -1 11
