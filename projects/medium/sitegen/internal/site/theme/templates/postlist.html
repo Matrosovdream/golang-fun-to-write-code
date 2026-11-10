@@ -1,0 +1,15 @@
+{{define "meta"}}<time datetime="{{.Date.Format "2006-01-02"}}">{{date .Date}}</time>{{if .Draft}} <span class="draft">draft</span>{{end}}{{range .Tags}} <a class="tag" href="{{tagURL .}}">#{{.}}</a>{{end}}{{end}}
+
+{{define "postlist"}}
+<ul class="posts">
+{{- range .}}
+  <li>
+    <a href="{{.URL}}">{{.Title}}</a>
+    <p class="meta">{{template "meta" .}}</p>
+    {{with .Summary}}<p>{{.}}</p>{{end}}
+  </li>
+{{- else}}
+  <li>Nothing here yet.</li>
+{{- end}}
+</ul>
+{{end}}

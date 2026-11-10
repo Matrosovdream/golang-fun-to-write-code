@@ -1,0 +1,8 @@
+{{define "title"}}{{.Page.Title}} - {{.Site.Title}}{{end}}
+{{define "content"}}
+<article>
+  <h1>{{.Page.Title}}</h1>
+  <p class="meta">{{template "meta" .Page}}</p>
+  {{.Body}}
+</article>
+{{end}}

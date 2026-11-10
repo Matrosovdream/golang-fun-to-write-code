@@ -1,0 +1,5 @@
+{{define "title"}}#{{.Tag}} - {{.Site.Title}}{{end}}
+{{define "content"}}
+<h1>Posts tagged <em>{{.Tag}}</em></h1>
+{{template "postlist" .Posts}}
+{{end}}
