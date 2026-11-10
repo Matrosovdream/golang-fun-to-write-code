@@ -1,0 +1,3 @@
+# The Go memory model
+
+The memory model states when a read in one goroutine is guaranteed to observe a write made in another. Without a synchronization event between them, the read may see the old value, the new value, or on some architectures a torn mixture of both. The guarantee is expressed as a happens-before relation: if write A happens before read B, then B sees A. A channel send happens before the matching receive completes, and unlocking a mutex happens before the next lock of it returns. Programs that follow these rules behave as if goroutines took turns on a single processor. Programs that ignore them contain data races, and the compiler is allowed to assume you did not write one.

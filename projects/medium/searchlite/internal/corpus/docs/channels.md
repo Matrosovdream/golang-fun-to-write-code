@@ -1,0 +1,3 @@
+# Channels
+
+A channel is a typed conduit through which one goroutine hands values to another. An unbuffered channel makes sender and receiver meet: the send completes only when a receiver is ready, so the two goroutines synchronize as a side effect. A buffered channel lets senders run ahead until the buffer fills. Closing a channel tells receivers that no more values are coming, and receiving from a closed channel returns the zero value immediately. Only the sending side should close a channel, because sending on a closed channel panics. A nil channel blocks forever, which is surprisingly useful for switching off one case of a select statement.
