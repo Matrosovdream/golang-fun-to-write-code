@@ -1,0 +1,14 @@
+# Infrastructure only: run the services on the host (go run ./cmd/...) and
+# these two containers beside them.
+#   Prometheus UI  http://localhost:9090   (scrapes :8104 and :8105 every 5s)
+#   Jaeger UI      http://localhost:16686  (receives OTLP/HTTP on :4318)
+services:
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    ports: ["9090:9090"]
+    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    extra_hosts: ["host.docker.internal:host-gateway"] # a no-op on Docker Desktop, needed on Linux
+
+  jaeger:
+    image: jaegertracing/jaeger:latest
+    ports: ["16686:16686", "4318:4318"]
