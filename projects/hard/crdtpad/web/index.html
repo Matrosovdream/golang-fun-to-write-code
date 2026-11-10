@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>crdtpad</title>
+<style>
+  :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+  body { margin: 0 auto; max-width: 52rem; padding: 1rem 16px; }
+  textarea { width: 100%; height: 60vh; box-sizing: border-box; font: 16px/1.5 ui-monospace, monospace; padding: .5rem; }
+  #status { font-weight: 600; }
+  #status.offline { color: #b45309; }
+</style>
+</head>
+<body>
+<h1>crdtpad</h1>
+<p>
+  <span id="status" class="offline">connecting</span>
+  <button id="toggle">Go offline</button>
+  <small id="info"></small>
+</p>
+<textarea id="pad" spellcheck="false" autofocus></textarea>
+<p><small>Open this page in two tabs (or add <code>?doc=name</code>). Go offline in one, type in both, go online again.</small></p>
+
+<script src="rga.js"></script>
+<script>
+'use strict';
+const docName = new URLSearchParams(location.search).get('doc') || 'pad';
+const replica = 'web-' + Math.random().toString(36).slice(2, 10); // new per page load: its state is not persisted
+const doc = new Doc(replica);
+const pad = document.getElementById('pad');
+const statusEl = document.getElementById('status');
+const toggle = document.getElementById('toggle');
+let ws = null;
+let wantOnline = true;
+
+document.getElementById('info').textContent = `doc "${docName}" as ${replica}`;
+
+function send(msg) {
+  // Dropped silently while offline: the op is in doc.log and goes out in the next sync.
+  if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(msg));
+}
+
+function sendOps(ops) {
+  for (let i = 0; i < ops.length; i += 256) send({ type: 'ops', ops: ops.slice(i, i + 256) });
+}
+
+function setStatus(online) {
+  statusEl.textContent = online ? 'online' : 'offline';
+  statusEl.className = online ? '' : 'offline';
+  toggle.textContent = wantOnline ? 'Go offline' : 'Go online';
+}
+
+function connect() {
+  if (ws || !wantOnline) return;
+  const mine = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws?doc=' + encodeURIComponent(docName));
+  ws = mine;
+  mine.onopen = () => {
+    setStatus(true);
+    mine.send(JSON.stringify({ type: 'hello', replica, version: doc.version }));
+  };
+  mine.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    applyRemote(msg.ops || []);
+    if (msg.type === 'sync') sendOps(doc.missing(msg.version || {}));
+  };
+  mine.onclose = () => {
+    if (ws === mine) ws = null;
+    setStatus(false);
+    if (wantOnline) setTimeout(connect, 1000);
+  };
+}
+
+toggle.onclick = () => {
+  wantOnline = !wantOnline;
+  if (wantOnline) connect();
+  else if (ws) ws.close();
+  setStatus(ws !== null && ws.readyState === WebSocket.OPEN);
+};
+
+// textarea offsets are UTF-16 units; the document counts code points
+const toCodePoints = (units) => Array.from(pad.value.slice(0, units)).length;
+const toUnits = (cps) => Array.from(pad.value).slice(0, cps).join('').length;
+
+pad.addEventListener('input', () => {
+  const old = doc.chars();
+  const next = Array.from(pad.value);
+  let prefix = 0;
+  while (prefix < old.length && prefix < next.length && old[prefix] === next[prefix]) prefix++;
+  let suffix = 0;
+  while (suffix < old.length - prefix && suffix < next.length - prefix &&
+         old[old.length - 1 - suffix] === next[next.length - 1 - suffix]) suffix++;
+  const ops = [];
+  for (let i = 0; i < old.length - prefix - suffix; i++) ops.push(doc.delete(prefix));
+  for (let i = prefix; i < next.length - suffix; i++) ops.push(doc.insert(i, next[i]));
+  sendOps(ops);
+});
+
+function applyRemote(ops) {
+  const carets = [pad.selectionStart, pad.selectionEnd].map((u) => doc.anchorAt(toCodePoints(u)));
+  let changed = false;
+  for (const op of ops) if (doc.apply(op).length > 0) changed = true;
+  if (!changed || doc.text() === pad.value) return;
+  pad.value = doc.text();
+  const [start, end] = carets.map((id) => toUnits(doc.posOf(id)));
+  pad.setSelectionRange(start, end);
+}
+
+connect();
+</script>
+</body>
+</html>
