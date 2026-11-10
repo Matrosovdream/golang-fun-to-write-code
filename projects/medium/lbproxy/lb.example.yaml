@@ -1,0 +1,47 @@
+# Demo config: three backends (cmd/demo-backend on 9101-9103) behind four
+# strategies, selected by path prefix. Pools are separate, so each keeps its
+# own health state and in-flight counters even for the same URL.
+listen: 127.0.0.1:8102
+
+routes:
+  - host: api.local        # host-specific routes beat wildcard hosts
+    pool: heavy
+  - path_prefix: /sticky/  # longer prefixes beat shorter ones
+    pool: sticky
+  - path_prefix: /busy/
+    pool: busy
+  - pool: web              # catch-all
+
+pools:
+  web:
+    strategy: round_robin
+    retries: 2             # extra attempts for GET/HEAD/OPTIONS, on other backends
+    health: {path: /healthz, interval: 1s, timeout: 500ms, rise: 2, fall: 2}
+    passive: {max_fails: 3, cooldown: 10s}
+    backends:
+      - url: http://127.0.0.1:9101
+      - url: http://127.0.0.1:9102
+      - url: http://127.0.0.1:9103
+
+  heavy:
+    strategy: weighted_round_robin
+    retries: 2
+    backends:
+      - {url: "http://127.0.0.1:9101", weight: 5}
+      - {url: "http://127.0.0.1:9102", weight: 1}
+      - {url: "http://127.0.0.1:9103", weight: 1}
+
+  sticky:
+    strategy: consistent_hash
+    hash_key: header:X-User  # or: ip (default), path
+    backends:
+      - url: http://127.0.0.1:9101
+      - url: http://127.0.0.1:9102
+      - url: http://127.0.0.1:9103
+
+  busy:
+    strategy: least_conn
+    backends:
+      - url: http://127.0.0.1:9101
+      - url: http://127.0.0.1:9102
+      - url: http://127.0.0.1:9103
