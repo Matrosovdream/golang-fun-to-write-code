@@ -1,0 +1,43 @@
+# Demo pipeline. Try:  dagrun --dry-run deploy    dagrun -j 4 package    dagrun -j 4 deploy    dagrun -k -j 4 deploy
+tasks:
+  fetch:
+    cmd: echo "fetching from $MIRROR (cwd $(pwd))"; sleep 1; echo fetched
+    env: {MIRROR: mirror.example}
+    dir: /
+
+  lint:
+    cmd: echo linting; sleep 1; echo "lint clean"
+    deps: [fetch]
+
+  compile-a:
+    cmd: echo compiling a; sleep 2; echo "a done"
+    deps: [fetch]
+
+  compile-b:
+    cmd: echo compiling b; sleep 1; echo "b done"
+    deps: [fetch]
+
+  test:
+    cmd: echo testing; sleep 1; echo "tests pass"
+    deps: [compile-a, compile-b]
+
+  package:
+    cmd: echo packaging; sleep 1
+    deps: [test, lint]
+
+  # Fails right away, so the difference between "stop" and -k is visible.
+  flaky:
+    cmd: echo "about to fail"; echo "something went wrong" >&2; false
+    deps: [fetch]
+
+  integration:
+    cmd: echo "never runs, flaky failed"
+    deps: [flaky]
+
+  deploy:
+    cmd: echo deploying
+    deps: [package, integration]
+
+  # Ctrl+C this one: the whole process tree dies, nothing is left behind.
+  hang:
+    cmd: sleep 300 & sleep 300 & wait
