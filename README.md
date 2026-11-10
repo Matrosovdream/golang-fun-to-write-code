@@ -2,7 +2,7 @@
 
 The name of this repo speaks for itself.
 
-Reference Go projects, medium → hard, built to be **rewritten by hand**: each project is complete,
+Reference Go projects, easy → hard, built to be **rewritten by hand**: each project is complete,
 idiomatic, and covers a specific slice of Go — patterns, popular libraries, concurrency, and
 optimization. Retype the code, run it, break it, fill the gaps.
 
@@ -12,10 +12,15 @@ optimization. Retype the code, run it, break it, fill the gaps.
 projects/
   PLAN.md        ← what each project is and what it covers
   PROGRESS.md    ← status table + log
-  medium/
+  easy/          ← 15 fundamentals projects, stdlib-first (E01–E15, see PLAN.md)
+    wordfreq/ tempconv/ passgen/ guessgame/ dirsize/ grepish/ csvreport/
+    jsontool/ todojson/ logmini/ stopwatch/ quizcli/ fetchcli/ pageserve/ multidl/
+  medium/        ← 10 projects
     taskcli/ shortlink/ fetchpool/ weathercache/ logparse/
-  hard/
+    dagrun/ searchlite/ lbproxy/ sitegen/ obsapi/
+  hard/          ← 10 projects
     gobank/ chathub/ grpc-inventory/ jobqueue/ metricsd/
+    tinylang/ lsmkv/ crdtpad/ orderflow/ raftkv/
 practice/        ← your own rewrites live here
 ```
 
@@ -31,4 +36,4 @@ Each project has its own `go.mod` and `README.md` with run instructions and rewr
 ## Requirements
 
 - Go 1.22+
-- Docker (hard level only — Postgres/Redis via docker-compose; fallbacks noted per project)
+- Docker (only `gobank`, `jobqueue` and the optional stack in `obsapi` — Postgres/Redis/Prometheus via docker-compose; fallbacks noted per project)
